@@ -19,7 +19,7 @@ import { MessageConfig as config } from '../config/message-config';
         <ng-content></ng-content>
     `
 } )
-export class TableWrapperComponent<T extends IKey> implements AfterContentInit {
+export class Table<T extends IKey> implements AfterContentInit {
     /**
      * 查询延迟
      */
@@ -31,7 +31,7 @@ export class TableWrapperComponent<T extends IKey> implements AfterContentInit {
     /**
      * 显示进度条
      */
-    loading: boolean;
+    @Input() loading: boolean;
     /**
      * 首次加载
      */
@@ -211,7 +211,7 @@ export class TableWrapperComponent<T extends IKey> implements AfterContentInit {
     /**
      * 加载数据
      */
-    private loadData( result ) {
+    protected loadData( result ) {
         result = new PagerList<T>( result );
         result.initLineNumbers();
         this.dataSource = result.data || [];
@@ -285,7 +285,7 @@ export class TableWrapperComponent<T extends IKey> implements AfterContentInit {
     /**
      * 是否所有行复选框被选中
      */
-    private isAllChecked() {
+    isAllChecked() {
         return this.dataSource.every( data => this.checkedSelection.isSelected( data ) );
     }
 

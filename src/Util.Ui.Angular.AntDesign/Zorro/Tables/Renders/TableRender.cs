@@ -1,5 +1,4 @@
-﻿using Util.Properties;
-using Util.Ui.Angular;
+﻿using Util.Ui.Angular;
 using Util.Ui.Angular.Base;
 using Util.Ui.Builders;
 using Util.Ui.Configs;
@@ -66,7 +65,7 @@ namespace Util.Ui.Zorro.Tables.Renders {
         /// <summary>
         /// 获取表格包装器标识
         /// </summary>
-        private string GetWrapperId() {
+        protected string GetWrapperId() {
             return _config.WrapperId;
         }
 
@@ -118,9 +117,10 @@ namespace Util.Ui.Zorro.Tables.Renders {
         protected virtual void ConfigTable( TagBuilder builder ) {
             var tableBuilder = new TableBuilder();
             ConfigTableDefault( tableBuilder );
+            ConfigStyle( tableBuilder );
             ConfigPage( tableBuilder );
             AddHead( tableBuilder );
-            AddRow( tableBuilder );
+            AddBody( tableBuilder );
             ConfigContent( tableBuilder );
             builder.AppendContent( tableBuilder );
         }
@@ -134,6 +134,13 @@ namespace Util.Ui.Zorro.Tables.Renders {
             tableBuilder.AddAttribute( "[nzTotal]", $"{GetWrapperId()}.totalCount" );
             tableBuilder.AddAttribute( "[nzShowPagination]", $"{GetWrapperId()}.showPagination" );
             tableBuilder.AddAttribute( "[nzLoading]", $"{GetWrapperId()}.loading" );
+        }
+
+        /// <summary>
+        /// 配置表格样式
+        /// </summary>
+        private void ConfigStyle( TagBuilder tableBuilder ) {
+            tableBuilder.AddAttribute( "nzBordered", _config.GetBoolValue( UiConst.ShowBorder ) );
         }
 
         /// <summary>
@@ -218,7 +225,7 @@ namespace Util.Ui.Zorro.Tables.Renders {
         /// <summary>
         /// 添加排序变更事件处理
         /// </summary>
-        private void AddSortChange( TableHeadBuilder headBuilder ) {
+        protected void AddSortChange( TableHeadBuilder headBuilder ) {
             if ( _config.IsSort == false )
                 return;
             headBuilder.AddSortChange( $"{GetWrapperId()}.sort($event)" );
@@ -227,7 +234,7 @@ namespace Util.Ui.Zorro.Tables.Renders {
         /// <summary>
         /// 添加标题列
         /// </summary>
-        private void AddHeadColumns( TableRowBuilder rowBuilder ) {
+        protected virtual void AddHeadColumns( TableRowBuilder rowBuilder ) {
             foreach( var column in _config.Columns ) {
                 var headColumnBuilder = new TableHeadColumnBuilder();
                 headColumnBuilder.AddWidth( column.Width );
@@ -243,17 +250,24 @@ namespace Util.Ui.Zorro.Tables.Renders {
         }
 
         /// <summary>
-        /// 添加行
+        /// 添加内容
         /// </summary>
-        protected void AddRow( TagBuilder tableBuilder ) {
+        protected void AddBody( TagBuilder tableBuilder ) {
             if( _config.AutoCreateRow == false )
                 return;
             var tableBodyBuilder = new TableBodyBuilder();
+            AddBody( tableBodyBuilder );
+            tableBuilder.AppendContent( tableBodyBuilder );
+        }
+
+        /// <summary>
+        /// 添加内容
+        /// </summary>
+        protected virtual void AddBody( TableBodyBuilder tableBodyBuilder ) {
             var rowBuilder = new TableRowBuilder();
             rowBuilder.NgFor( $"let row of {_config.Id}.data" );
             rowBuilder.AppendContent( _config.Content );
             tableBodyBuilder.AppendContent( rowBuilder );
-            tableBuilder.AppendContent( tableBodyBuilder );
         }
     }
 }

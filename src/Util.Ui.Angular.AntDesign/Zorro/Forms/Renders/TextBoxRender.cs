@@ -78,6 +78,8 @@ namespace Util.Ui.Zorro.Forms.Renders {
             if( _config.IsDatePicker == false )
                 return;
             ConfigDatePickerType( builder );
+            ConfigDateFormat( builder );
+            ConfigShowTime( builder );
         }
 
         /// <summary>
@@ -85,6 +87,20 @@ namespace Util.Ui.Zorro.Forms.Renders {
         /// </summary>
         private void ConfigDatePickerType( TagBuilder builder ) {
             builder.AddAttribute( "type", _config.GetValue<DatePickerType?>( UiConst.Type ).Description() );
+        }
+
+        /// <summary>
+        /// 配置日期格式化
+        /// </summary>
+        private void ConfigDateFormat( TagBuilder builder ) {
+            builder.AddAttribute( "format", _config.GetValue( UiConst.Format ) );
+        }
+
+        /// <summary>
+        /// 配置显示时间
+        /// </summary>
+        private void ConfigShowTime( TagBuilder builder ) {
+            builder.AddAttribute( "showTime", _config.GetBoolValue( UiConst.ShowTime ) );
         }
 
         /// <summary>
@@ -100,7 +116,10 @@ namespace Util.Ui.Zorro.Forms.Renders {
         /// 配置类型
         /// </summary>
         private void ConfigType( TagBuilder builder ) {
-            builder.AddAttribute( UiConst.Type, _config.GetValue<TextBoxType?>( UiConst.Type )?.Description() );
+            var type = _config.GetValue<TextBoxType?>( UiConst.Type );
+            if ( type == TextBoxType.Number )
+                return;
+            builder.AddAttribute( UiConst.Type, type?.Description() );
         }
 
         /// <summary>

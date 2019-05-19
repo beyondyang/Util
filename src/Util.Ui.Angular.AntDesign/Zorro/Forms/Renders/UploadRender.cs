@@ -68,6 +68,7 @@ namespace Util.Ui.Zorro.Forms.Renders {
         private void ConfigWrapper( UploadWrapperBuilder builder ) {
             builder.AddAttribute( $"#{GetWrapperId()}" );
             builder.AddAttribute( "[(model)]", _config.GetValue( UiConst.Model ) );
+            builder.AddAttribute( "[(model)]", _config.GetValue( AngularConst.NgModel ) );
         }
 
         /// <summary>
@@ -85,6 +86,8 @@ namespace Util.Ui.Zorro.Forms.Renders {
         private void Config( UploadBuilder builder ) {
             ConfigId( builder );
             ConfigDataSource( builder );
+            ConfigDisabled( builder );
+            ConfigShowButton( builder );
             ConfigMultiple( builder );
             ConfigDirectory( builder );
             ConfigFileList( builder );
@@ -104,6 +107,20 @@ namespace Util.Ui.Zorro.Forms.Renders {
             builder.AddAttribute( "nzAction", _config.GetValue( UiConst.Url ) );
             builder.AddAttribute( "[nzAction]", _config.GetValue( AngularConst.BindUrl ) );
             builder.AddAttribute( "[nzData]", _config.GetValue( UiConst.Data ) );
+        }
+
+        /// <summary>
+        /// 配置禁用
+        /// </summary>
+        private void ConfigDisabled( TagBuilder builder ) {
+            builder.AddAttribute( "[nzDisabled]", _config.GetValue( UiConst.Disabled ) );
+        }
+
+        /// <summary>
+        /// 配置显示按钮
+        /// </summary>
+        private void ConfigShowButton( TagBuilder builder ) {
+            builder.AddAttribute( "[nzShowButton]", _config.GetValue( UiConst.ShowButton ) );
         }
 
         /// <summary>
@@ -138,9 +155,17 @@ namespace Util.Ui.Zorro.Forms.Renders {
             if( _config.Content.IsEmpty() == false )
                 return;
             var buttonBuilder = new ButtonWrapperBuilder();
+            ConfigButtonDisabled( buttonBuilder );
             ConfigButtonText( buttonBuilder );
             ConfigButtonIcon( buttonBuilder );
             builder.AppendContent( buttonBuilder );
+        }
+
+        /// <summary>
+        /// 配置按钮禁用
+        /// </summary>
+        private void ConfigButtonDisabled( TagBuilder builder ) {
+            builder.AddAttribute( "[disabled]", _config.GetValue( UiConst.Disabled ) );
         }
 
         /// <summary>
@@ -287,6 +312,8 @@ namespace Util.Ui.Zorro.Forms.Renders {
         private void ConfigLimit( UploadBuilder builder ) {
             builder.AddAttribute( "nzSize", _config.GetValue( UiConst.Size ) );
             builder.AddAttribute( "nzLimit", _config.GetValue( UiConst.Limit ) );
+            if( _config.Contains( UiConst.TotalLimit ) )
+                builder.AddAttribute( "[nzShowButton]", $"!{GetWrapperId()}.files||({GetWrapperId()}.files&&{GetWrapperId()}.files).length<{_config.GetValue( UiConst.TotalLimit )}" );
         }
 
         /// <summary>

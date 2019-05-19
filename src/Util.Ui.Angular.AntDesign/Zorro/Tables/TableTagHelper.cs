@@ -18,21 +18,21 @@ namespace Util.Ui.Zorro.Tables {
         /// </summary>
         public string BaseUrl { get; set; }
         /// <summary>
-        /// 数据加载地址，范例：/api/test
-        /// </summary>
-        public string Url { get; set; }
-        /// <summary>
-        /// 删除地址，注意：由于支持批量删除，所以采用Post提交，范例：/api/test/delete
-        /// </summary>
-        public string DeleteUrl { get; set; }
-        /// <summary>
         /// 基地址，基于该地址构建加载地址和删除地址，范例：传入test,则加载地址为/api/test,删除地址为/api/test/delete
         /// </summary>
         public string BindBaseUrl { get; set; }
         /// <summary>
         /// 数据加载地址，范例：/api/test
         /// </summary>
+        public string Url { get; set; }
+        /// <summary>
+        /// 数据加载地址，范例：/api/test
+        /// </summary>
         public string BindUrl { get; set; }
+        /// <summary>
+        /// 删除地址，注意：由于支持批量删除，所以采用Post提交，范例：/api/test/delete
+        /// </summary>
+        public string DeleteUrl { get; set; }
         /// <summary>
         /// 删除地址，注意：由于支持批量删除，所以采用Post提交，范例：/api/test/delete
         /// </summary>
@@ -45,6 +45,10 @@ namespace Util.Ui.Zorro.Tables {
         /// 排序字段,范例: creationTime desc
         /// </summary>
         public string Sort { get; set; }
+        /// <summary>
+        /// nzBordered,是否显示边框
+        /// </summary>
+        public bool ShowBorder { get; set; }
         /// <summary>
         /// 最大高度
         /// </summary>
@@ -100,7 +104,9 @@ namespace Util.Ui.Zorro.Tables {
         /// 初始化共享实例
         /// </summary>
         public void InitShare( TagHelperContext context ) {
-            context.SetValueToItems( TableConfig.TableShareKey, new TableShareConfig( GetId( context ) ) );
+            var shareConfig = new TableShareConfig( GetId( context ) );
+            InitShareConfig( context, shareConfig );
+            context.SetValueToItems( TableConfig.TableShareKey, shareConfig );
         }
 
         /// <summary>
@@ -110,6 +116,12 @@ namespace Util.Ui.Zorro.Tables {
             if ( context.AllAttributes.ContainsName( UiConst.Id ) )
                 return context.GetValueFromAttributes<string>( UiConst.Id );
             return $"m_{Util.Helpers.Id.Guid()}";
+        }
+
+        /// <summary>
+        /// 初始化共享配置
+        /// </summary>
+        protected virtual void InitShareConfig( TagHelperContext context, TableShareConfig config ) {
         }
     }
 }
